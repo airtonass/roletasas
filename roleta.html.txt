@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roleta da Sorte - SAS TELECOM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1e3a8a;
+            --primary-violet: #7c3aed;
+            --accent-cyan: #06b6d4;
+            --gold: #fbbf24;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-blue), var(--primary-violet));
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-animation .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .bg-animation .circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            bottom: -200px;
+            right: -200px;
+            animation-delay: 5s;
+        }
+
+        .bg-animation .circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 50%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        header {
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--primary-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            min-height: calc(100vh - 100px);
+        }
+
+        .content {
+            animation: slideInLeft 1s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: #1e1b4b;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .prizes-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .prize-item {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .prize-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-violet);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+        }
+
+        .prize-item.lose {
+            opacity: 0.6;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .prize-icon {
+            font-size: 1.5rem;
+        }
+
+        .prize-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: slideInRight 1s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            filter: drop-shadow(0 20px 50px rgba(124, 58, 237, 0.5));
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            border: 8px solid var(--gold);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3), inset 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .wheel-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: right bottom;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .wheel-segment span {
+            transform: rotate(30deg);
+            display: block;
+            width: 100%;
+            padding-left: 15px;
+            line-height: 1.2;
+        }
+
+        .segment-1 { background: linear-gradient(135deg, #7c3aed, #6d28d9); transform: rotate(0deg); }
+        .segment-2 { background: linear-gradient(135deg, #1e40af, #1e3a8a); transform: rotate(60deg); }
+        .segment-3 { background: linear-gradient(135deg, #374151, #1f2937); transform: rotate(120deg); color: #9ca3af; }
+        .segment-4 { background: linear-gradient(135deg, #0891b2, #0e7490); transform: rotate(180deg); }
+        .segment-5 { background: linear-gradient(135deg, #374151, #1f2937); transform: rotate(240deg); color: #9ca3af; }
+        .segment-6 { background: linear-gradient(135deg, #dc2626, #b91c1c); transform: rotate(300deg); }
+
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #1e1b4b;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10;
+            border: 4px solid white;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 20;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        .spin-btn {
+            margin-top: 40px;
+            padding: 20px 60px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary-violet), var(--primary-blue));
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.6);
+        }
+
+        .spin-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .spin-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .spin-btn:hover::before {
+            left: 100%;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid var(--primary-violet);
+            box-shadow: 0 20px 60px rgba(124, 58, 237, 0.5);
+            animation: modalPop 0.5s ease-out;
+            position: relative;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .modal h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+
+        .modal p {
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-violet);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: #1e1b4b;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: white;
+        }
+
+        .result-modal .modal-content {
+            background: linear-gradient(135deg, #312e81, #1e1b4b);
+        }
+
+        .result-modal.lose .modal-content {
+            background: linear-gradient(135deg, #374151, #1f2937);
+            border-color: #6b7280;
+        }
+
+        .prize-display {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            animation: bounce 1s infinite;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .data-info {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+
+        .data-info strong {
+            color: var(--accent-cyan);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .social-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .social-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .social-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+        }
+
+        .instagram-btn {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 999;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .wheel-wrapper {
+                width: 350px;
+                height: 350px;
+            }
+
+            .wheel-segment {
+                font-size: 0.65rem;
+            }
+
+            .prizes-list {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-text {
+                font-size: 1.4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .wheel-wrapper {
+                width: 300px;
+                height: 300px;
+            }
+
+            .wheel-segment {
+                font-size: 0.6rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .social-buttons {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .social-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .logo-img {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .try-again-btn {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+            margin-top: 10px;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #86efac;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .instructions h3 {
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+            color: #94a3b8;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <!-- SUBSTITUA PELO SEU LOGO -->
+            <div style="width: 60px; height: 60px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 0.7rem; text-align: center;">
+                S.A.S<br>TELECOM
+            </div>
+            <div class="logo-text">S.A.S<br>TELECOM</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <div class="badge">🎉 PROMOÇÃO EXCLUSIVA</div>
+            <h1>Gire e Ganhe!</h1>
+            <p class="subtitle">Participe da nossa roleta da sorte e concorra a prêmios incríveis. Teste sua sorte e saia com até 3 MESES DE INTERNET GRÁTIS!</p>
+            
+            <div class="prizes-list">
+                <div class="prize-item">
+                    <div class="prize-icon">🎁</div>
+                    <div class="prize-text">3 Meses de Internet Grátis</div>
+                </div>
+                <div class="prize-item">
+                    <div class="prize-icon">💎</div>
+                    <div class="prize-text">1 Mensalidade Grátis</div>
+                </div>
+                <div class="prize-item">
+                    <div class="prize-icon">💰</div>
+                    <div class="prize-text">R$ 100 no Pix</div>
+                </div>
+                <div class="prize-item">
+                    <div class="prize-icon">💵</div>
+                    <div class="prize-text">R$ 50 no Pix</div>
+                </div>
+                <div class="prize-item lose">
+                    <div class="prize-icon">😢</div>
+                    <div class="prize-text">Não foi dessa vez (3x)</div>
+                </div>
+            </div>
+
+            <div class="data-info">
+                <strong>🔒 Onde seus dados vão?</strong>
+                Seus dados são enviados para nossa equipe SAS TELECOM via WhatsApp e email para entrarmos em contato sobre seu prêmio ou plano.
+            </div>
+
+            <div class="instructions">
+                <h3>📋 Como usar esta página:</h3>
+                <ol>
+                    <li>Clique em <span class="highlight">"GIRAR ROLETA"</span></li>
+                    <li>Preencha seus dados no formulário</li>
+                    <li>Aguarde a roleta girar e veja seu prêmio!</li>
+                    <li>Clique em <span class="highlight">"RESGATAR"</span> para falar no WhatsApp</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="wheel-container">
+            <div class="wheel-wrapper">
+                <div class="pointer"></div>
+                <div class="wheel" id="wheel">
+                    <div class="wheel-segment segment-1"><span>3 Meses<br>Grátis</span></div>
+                    <div class="wheel-segment segment-2"><span>R$100<br>Pix</span></div>
+                    <div class="wheel-segment segment-3"><span>Não foi<br>dessa vez</span></div>
+                    <div class="wheel-segment segment-4"><span>R$50<br>Pix</span></div>
+                    <div class="wheel-segment segment-5"><span>Não foi<br>dessa vez</span></div>
+                    <div class="wheel-segment segment-6"><span>1 Mês<br>Grátis</span></div>
+                </div>
+                <div class="wheel-center">S.A.S<br>TELECOM</div>
+            </div>
+            
+            <button class="spin-btn" id="spinBtn" onclick="openModal()">
+                GIRAR ROLETA 🎲
+            </button>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-icon">📝</div>
+            <h2>Quase lá!</h2>
+            <p>Preencha seus dados para participar do sorteio:</p>
+            
+            <div class="success-message" id="successMessage">
+                ✅ Dados salvos com sucesso! Preparando a roleta...
+            </div>
+
+            <form id="registerForm" onsubmit="startSpin(event)">
+                <div class="form-group">
+                    <label for="nome">Nome Completo *</label>
+                    <input type="text" id="nome" required placeholder="Digite seu nome completo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefone">WhatsApp *</label>
+                    <input type="tel" id="telefone" required placeholder="(85) 99999-9999" maxlength="15">
+                </div>
+                
+                <div class="form-group">
+                    <label for="endereco">Endereço Completo *</label>
+                    <input type="text" id="endereco" required placeholder="Rua, número, bairro, cidade">
+                </div>
+                
+                <div class="form-group">
+                    <label for="plano">Plano de Interesse *</label>
+                    <select id="plano" required>
+                        <option value="">Selecione um plano</option>
+                        <option value="200mb">200 Mega</option>
+                        <option value="300mb">300 Mega</option>
+                        <option value="500mb">500 Mega</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    CONFIRMAR E GIRAR 🎯
+                </button>
+            </form>
+
+            <div style="margin-top: 15px; font-size: 0.8rem; color: #64748b;">
+                🔒 Seus dados estão seguros e serão usados apenas para contato sobre a promoção
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal - Win -->
+    <div class="modal result-modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-icon" id="prizeIcon">🎉</div>
+            <h2 id="prizeTitle">Parabéns!</h2>
+            <div class="prize-display" id="prizeText"></div>
+            <p id="prizeDescription"></p>
+            <button class="submit-btn" onclick="closeResultModal()">
+                RESGATAR PRÊMIO 📱
+            </button>
+        </div>
+    </div>
+
+    <!-- Result Modal - Lose -->
+    <div class="modal result-modal lose" id="loseModal">
+        <div class="modal-content">
+            <div class="modal-icon">😢</div>
+            <h2>Que pena!</h2>
+            <div class="prize-display">NÃO FOI<br>DESSA VEZ</div>
+            <p>Não desanime! Você ainda pode contratar nossos planos com preços especiais.</p>
+            <button class="submit-btn" onclick="closeLoseModal()">
+                VER PLANOS 📱
+            </button>
+            <button class="submit-btn try-again-btn" onclick="tryAgain()" style="margin-top: 10px;">
+                TENTAR NOVAMENTE 🔄
+            </button>
+        </div>
+    </div>
+
+    <!-- Social Buttons -->
+    <div class="social-buttons">
+        <a href="https://wa.me/5585921633795" target="_blank" class="social-btn whatsapp-btn" title="Fale conosco no WhatsApp">
+            💬
+        </a>
+        <a href="https://instagram.com/sas_telecom_oficial" target="_blank" class="social-btn instagram-btn" title="Siga-nos no Instagram">
+            📷
+        </a>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO - ALTERE ESTES DADOS CONFORME NECESSÁRIO
+        const CONFIG = {
+            // WhatsApp da empresa (apenas números, com código do país)
+            whatsappNumber: '5585921633795',
+            
+            // Email para receber notificações
+            emailTo: 'sastelecom@email.com'
+        };
+
+        // Máscara de telefone
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 7) {
+                value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+            } else if (value.length > 2) {
+                value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            } else if (value.length > 0) {
+                value = `(${value}`;
+            }
+            
+            e.target.value = value;
+        });
+
+        let currentRotation = 0;
+        let isSpinning = false;
+        let userData = {};
+
+        const prizes = [
+            { icon: '👑', title: 'INCRÍVEL!', text: '3 MESES DE INTERNET GRÁTIS', desc: 'Você ganhou 3 meses de internet 100% gratuita! Nossa equipe entrará em contato.', type: 'win' },
+            { icon: '💎', title: 'PARABÉNS!', text: 'R$ 100 NO PIX', desc: 'Você ganhou R$ 100,00 direto no seu Pix! Envie seu comprovante de cadastro.', type: 'win' },
+            { icon: '😢', title: 'QUE PENA!', text: 'NÃO FOI DESSA VEZ', desc: 'Não desanime! Temos planos incríveis esperando por você.', type: 'lose' },
+            { icon: '💵', title: 'PARABÉNS!', text: 'R$ 50 NO PIX', desc: 'Você ganhou R$ 50,00 no Pix! Um presente para começar bem.', type: 'win' },
+            { icon: '😢', title: 'QUE PENA!', text: 'NÃO FOI DESSA VEZ', desc: 'Não desanime! Temos planos incríveis esperando por você.', type: 'lose' },
+            { icon: '🎁', title: 'QUE SORTE!', text: '1 MÊS GRÁTIS', desc: 'Sua primeira mensalidade é por nossa conta! Aproveite a internet SAS.', type: 'win' }
+        ];
+
+        function openModal() {
+            if (isSpinning) return;
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        function closeResultModal() {
+            document.getElementById('resultModal').style.display = 'none';
+            
+            const prize = document.getElementById('prizeText').innerText;
+            const message = `🎉 *NOVO GANHADOR DA ROLETA SAS TELECOM!*
+
+👤 *Nome:* ${userData.nome}
+📱 *WhatsApp:* ${userData.telefone}
+📍 *Endereço:* ${userData.endereco}
+📡 *Plano escolhido:* ${userData.plano}
+
+🏆 *PRÊMIO GANHO:* ${prize}
+
+💬 O cliente está aguardando contato para resgatar o prêmio!`;
+
+            window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function closeLoseModal() {
+            document.getElementById('loseModal').style.display = 'none';
+            
+            const message = `🎯 *NOVO LEAD - ROLETA SAS TELECOM*
+
+👤 *Nome:* ${userData.nome}
+📱 *WhatsApp:* ${userData.telefone}
+📍 *Endereço:* ${userData.endereco}
+📡 *Plano escolhido:* ${userData.plano}
+
+😢 *Resultado:* Não ganhou na roleta, mas demonstrou interesse nos planos!
+
+💬 Entrar em contato para oferecer condições especiais!`;
+
+            window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function tryAgain() {
+            document.getElementById('loseModal').style.display = 'none';
+            document.getElementById('registerForm').reset();
+            openModal();
+        }
+
+        async function saveData(data) {
+            // Salva no LocalStorage como backup
+            const leads = JSON.parse(localStorage.getItem('sasLeads') || '[]');
+            leads.push({
+                ...data,
+                dataHora: new Date().toLocaleString('pt-BR'),
+                userAgent: navigator.userAgent
+            });
+            localStorage.setItem('sasLeads', JSON.stringify(leads));
+
+            // Envia para FormSubmit (email)
+            try {
+                await fetch(`https://formsubmit.co/ajax/${CONFIG.emailTo}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nome: data.nome,
+                        telefone: data.telefone,
+                        endereco: data.endereco,
+                        plano: data.plano,
+                        data: new Date().toLocaleString('pt-BR'),
+                        origem: 'Roleta da Sorte - SAS TELECOM'
+                    })
+                });
+            } catch (e) {
+                console.log('Erro ao enviar email:', e);
+            }
+        }
+
+        async function startSpin(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('spinBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const wheel = document.getElementById('wheel');
+            const successMsg = document.getElementById('successMessage');
+            
+            userData = {
+                nome: document.getElementById('nome').value,
+                telefone: document.getElementById('telefone').value,
+                endereco: document.getElementById('endereco').value,
+                plano: document.getElementById('plano').value
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> SALVANDO...';
+            
+            await saveData(userData);
+            
+            successMsg.style.display = 'block';
+            submitBtn.innerHTML = '✅ DADOS SALVOS!';
+            
+            setTimeout(() => {
+                closeModal();
+                isSpinning = true;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading"></span> SORTEANDO...';
+
+                const prizeIndex = Math.floor(Math.random() * 6);
+                
+                const segmentAngle = 60;
+                const targetAngle = 360 - (prizeIndex * segmentAngle) - 30;
+                const spins = 5 * 360;
+                const finalRotation = currentRotation + spins + targetAngle;
+                
+                wheel.style.transform = `rotate(${finalRotation}deg)`;
+                currentRotation = finalRotation;
+
+                playWinSound();
+
+                setTimeout(() => {
+                    showResult(prizeIndex);
+                    isSpinning = false;
+                    btn.disabled = false;
+                    btn.innerHTML = 'GIRAR NOVAMENTE 🎲';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'CONFIRMAR E GIRAR 🎯';
+                    successMsg.style.display = 'none';
+                    
+                    if (prizes[prizeIndex].type === 'win') {
+                        createConfetti();
+                    }
+                }, 5000);
+            }, 1500);
+        }
+
+        function showResult(index) {
+            const prize = prizes[index];
+            
+            if (prize.type === 'lose') {
+                document.getElementById('loseModal').style.display = 'flex';
+            } else {
+                document.getElementById('prizeIcon').innerText = prize.icon;
+                document.getElementById('prizeTitle').innerText = prize.title;
+                document.getElementById('prizeText').innerText = prize.text;
+                document.getElementById('prizeDescription').innerText = prize.desc;
+                document.getElementById('resultModal').style.display = 'flex';
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#fbbf24', '#7c3aed', '#06b6d4', '#10b981', '#f59e0b'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 50);
+            }
+        }
+
+        function playWinSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+                oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.3);
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
